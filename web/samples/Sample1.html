@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <title>Choropleth - Leaflet</title>
+        <meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="shortcut icon" type="image/x-icon" href="../../web/assets/images/favicon.ico" />
+	    <link rel="stylesheet" href="../../web/assets/css/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
+        <script src="../../web/assets/js/leaflet.js" integrity="sha512-mNqn2Wg7tSToJhvHcqfzLMU6J4mkOImSPTxVZAdo+lcPlk+GhZmYgACEe0x35K7YzW1zJ7XyJV/TT1MrdXvMcA==" crossorigin=""></script>
+		<style>
+			#map {
+    			width: 100%;
+				height: 600px;
+			}
+			.info {
+    			padding: 6px 8px;
+    			font: 14px/16px Arial, Helvetica, sans-serif;
+    			background: white;
+    			background: rgba(255,255,255,0.8);
+    			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    			border-radius: 5px;
+			}
+			.info h4 {
+    			margin: 0 0 5px;
+    			color: #777;
+			}
+			.legend {
+    			line-height: 18px;
+    			color: #555;
+			}
+			.legend i {
+    			width: 18px;
+    			height: 18px;
+    			float: left;
+    			margin-right: 8px;
+    			opacity: 0.7;
+			}
+		</style>
+	</head>
+	<body>
+		<div id='map'></div>
+        <script type="text/javascript" src="../../web/assets/js/test.js"></script>
+        <script type="text/javascript">
+
+			var map = L.map('map').setView([12.977527, 77.635864], 10);
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' + 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+				id: 'mapbox.light'
+			}).addTo(map);
+
+			var geojson = L.geoJson(statesData).addTo(map);
+			function getColor(d) {
+				return d > 4500 ? '#FF0000' :
+					   d > 4000 ? '#FF3E00' :
+           			   d > 3500 ? '#FF5500' :
+           			   d > 3000 ? '#FF8300' :
+           			   d > 2500 ? '#FFD100' :
+           			   d > 2000 ? '#E0FF00' :
+           			   d > 1500 ? '#A6FF00' :
+					   d > 1000 ? '#68FF00' :
+					   d > 500 ? '#33BB33' :
+                     		      '#119911' ;
+			}
+
+			function style(feature) {
+
+    			var mapcolor =  {
+        			fillColor: getColor(feature.properties.six_hours),
+        			weight: 2,
+        			opacity: 1,
+        			color: 'fff',
+        			dashArray: '3',
+        			fillOpacity: 1
+    			};
+                return mapcolor;
+
+                }
+			
+            L.geoJson(statesData, {style: style}).addTo(map);
+
+            var planes = [
+                ["Silk Board",77.6348876953125,12.914890953258695],
+                ["Electronic City",77.66716003417969,12.856657207120916],
+                ["Jayanagar", 77.58750915527344,12.936976069194962],
+                ["Whitefeild",77.74749755859375,12.966419848296587]
+                ];
+
+                for (var i = 0; i < planes.length; i++) {
+                    marker = new L.marker([planes[i][2],planes[i][1]])
+                        .bindPopup(planes[i][0])
+                        .addTo(map);
+                }
+
+			function highlightFeature(e) {
+    			
+				var layer = e.target;
+				layer.setStyle({
+        			weight: 1,
+        			color: '#666',
+        			dashArray: '',
+        			fillOpacity: 1
+    			});
+				if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        			layer.bringToFront();
+				}
+
+				info.update(layer.feature.properties);
+
+            };
+            
+
+			function resetHighlight(e) {
+				geojson.resetStyle(e.target);
+				info.update();
+			};
+
+			function zoomToFeature(e) {
+   				map.fitBounds(e.target.getBounds());
+			};
+
+			function onEachFeature(feature, layer) {
+    			
+				layer.on({
+       				mouseover: highlightFeature,
+        			mouseout: resetHighlight,
+        			click: zoomToFeature
+    			});
+				
+			};
+
+			geojson = L.geoJson(statesData, {
+    			style: style,
+    			onEachFeature: onEachFeature
+			}).addTo(map);
+
+			var info = L.control();
+			info.onAdd = function (map) {
+    			this._div = L.DomUtil.create('div', 'info');
+    			this.update();
+    			return this._div;
+			};
+
+			info.update = function (props) {
+    			this._div.innerHTML = '<h4>Bangalore City Traffic</h4>' +  (props ? '<b>' + props.name + '<br> <b> Last 6 hours traffic - '+ props.six_hours : 'Hover over a area');
+			};
+
+			info.addTo(map);
+			
+			var legend = L.control({position: 'bottomright'});
+			legend.onAdd = function (map) {
+				var div = L.DomUtil.create('div', 'info legend'),
+        		grades = [0,500,1000,1500,2000,2500,3000,3500,4000,4500],
+        		labels = [];
+				for (var i = grades.length-1; i >=0; i--) {
+                    div.innerHTML +='<i style="background:' + getColor(grades[i] + 0.1) + '"></i> ' + grades[i] + (grades[i + 1]  ? '&ndash;' + grades[i + 1]  + '<br>' : '+<br>');
+                }
+			return div;
+			};
+
+			legend.addTo(map);
+
+		</script>
+	</body>
+</html>
