@@ -39,7 +39,7 @@
 	</head>
 	<body>
 		<div id='map'></div>
-        <script type="text/javascript" src="../../web/assets/js/test.js"></script>
+        <script type="text/javascript" src="../../web/assets/js/test2.js"></script>
         <script type="text/javascript">
 
 			var map = L.map('map').setView([12.977527, 77.635864], 10);
@@ -51,16 +51,16 @@
 
 			var geojson = L.geoJson(statesData).addTo(map);
 			function getColor(d) {
-				return d > 4500 ? '#FF0000' :
-					   d > 4000 ? '#FF3E00' :
-           			   d > 3500 ? '#FF5500' :
-           			   d > 3000 ? '#FF8300' :
-           			   d > 2500 ? '#FFD100' :
-           			   d > 2000 ? '#E0FF00' :
-           			   d > 1500 ? '#A6FF00' :
-					   d > 1000 ? '#68FF00' :
-					   d > 500 ? '#33BB33' :
-                     		      '#119911' ;
+				return 	d > 4500 ? '#FF0000' :
+						d > 4000 ? '#FF3E00' :
+						d > 3500 ? '#FF5500' :
+						d > 3000 ? '#FF8300' :
+						d > 2500 ? '#FFD100' :
+						d > 2000 ? '#E0FF00' :
+						d > 1500 ? '#A6FF00' :
+						d > 1000 ? '#68FF00' :
+						d > 500 ? '#33BB33' :
+						'#119911' ;
 			}
 
 			function style(feature) {
@@ -75,22 +75,33 @@
     			};
                 return mapcolor;
 
-                }
+      }
 			
-            L.geoJson(statesData, {style: style}).addTo(map);
+      L.geoJson(statesData, {style: style}).addTo(map);
 
-            var planes = [
-                ["Silk Board",77.6348876953125,12.914890953258695],
-                ["Electronic City",77.66716003417969,12.856657207120916],
-                ["Jayanagar", 77.58750915527344,12.936976069194962],
-                ["Whitefeild",77.74749755859375,12.966419848296587]
-                ];
-
-                for (var i = 0; i < planes.length; i++) {
-                    marker = new L.marker([planes[i][2],planes[i][1]])
-                        .bindPopup(planes[i][0])
-                        .addTo(map);
-                }
+			var planes = [
+					["Bhattarahalli","2635",77.73788452148438,13.059412503703712],
+					["Kalyanagar", "3635",77.64862060546875,13.023290004843894],
+					["Whitefeild","3100",77.7447509765625,12.960397540269616],
+					["Varthur","2435",77.728271484375,12.92158361893239],
+					["Indira Nagar (HAL-II)","5635",77.62802124023438,12.977794921312839],
+					["Electronics City","569",77.66647338867188,12.857326637394761],
+					["Gottigere","3435",77.59918212890625,12.821174850230918],
+					["Agara","3435",77.65411376953125,12.932291510920052],
+					["IIHS (Kengeri campus)","2435",77.44949340820312,12.922922130547533],
+					["Jayanagar 4th block","1700",77.58819580078,12.9389837100960],
+					["J P Nagar","435",77.57308959960938,12.910875267801023],
+					["Bagalgunte","435",77.4810791015625,13.04469656691112],
+					["Peenya Small Industries","435",77.52639770507812,13.028641818911026],
+					["Jakkur Lake","2635",77.58476257324217,13.121611084991782],
+					["Silk Board","1435",77.63214111328124,12.913552398609209]
+			];
+			
+			for (var i = 0; i < planes.length; i++) {
+				marker = new L.marker([planes[i][3],planes[i][2]])
+					.bindPopup(planes[i][0]+"<br>"+planes[i][1])
+					.addTo(map);
+			}
 
 			function highlightFeature(e) {
     			
