@@ -54,7 +54,7 @@ This step-by-step guide will quickly get you started on Leaflet basics, includin
 
    1. Data Source
 
-       We’ll be creating a visualization of Traffic of diffrent areas of Bangalore. As the amount of data is not very big, the most convenient and simple way to store and then display it is GeoJSON.
+       We’ll be creating a choropleth map 15 diffrent areas of Bangalore. As the amount of data is not very big, the most convenient and simple way to store and then display it is GeoJSON.
 
        Sample GeoJson File Of Bangalore --> https://bitbucket.org/bankamitesh/bangalore_traffic/src/2be3f59ce47ad7dbd40241406d7d1c87d5347bec/web/assets/js/test2.js?at=master
 
